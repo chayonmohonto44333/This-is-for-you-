@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surprise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Siyam+Rupali&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff6a6a, #ffb3b3, #ffe6e6);
+      background-size: 200% 200%;
+      animation: backgroundShift 10s ease infinite alternate;
+      color: white;
+      font-family: 'Siyam Rupali', Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      padding: 10px;
+    }
+
+    @keyframes backgroundShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease, transform 1s ease;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .page.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      font-size: 1.2rem;
+      border: 2px solid white;
+      border-radius: 30px;
+      background-color: transparent;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      z-index: 10;
+      position: relative;
+      max-width: 90vw;
+      word-break: break-word;
+    }
+
+    .btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .typing {
+      position: relative;
+      font-size: 1.5rem;
+      max-width: 90vw;
+      white-space: pre-line;
+      text-align: center;
+      line-height: 1.4em;
+      border-right: 2px solid white;
+      animation: blink 0.7s infinite;
+      padding-top: 40px;
+      z-index: 10;
+      word-break: break-word;
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        border-color: transparent;
+      }
+      50% {
+        border-color: white;
+      }
+    }
+
+    .heart {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) rotate(-45deg);
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      animation: pulse 1s infinite;
+      z-index: 10;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -25px;
+      left: 0;
+    }
+
+    .heart::after {
+      top: 0;
+      left: 25px;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+      }
+      50% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.2);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+
+      .typing {
+        font-size: 1.2rem;
+        padding-top: 35px;
+      }
+
+      .heart,
+      .heart::before,
+      .heart::after {
+        width: 40px;
+        height: 40px;
+      }
+
+      .heart::before {
+        top: -20px;
+        left: 0;
+      }
+
+      .heart::after {
+        top: 0;
+        left: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- First Page -->
+  <div class="page" id="page1">
+    <button class="btn" onclick="goToNextPage()">This is for you Musfik ✨🖤</button>
+  </div>
+
+  <!-- Second Page -->
+  <div class="page hidden" id="page2">
+    <div class="typing" id="typingContainer">
+      <span id="text"></span>
+      <div class="heart"></div>
+    </div>
+  </div>
+
+  <!-- Hidden Audio Player -->
+  <audio id="bgMusic" loop>
+    <source src="
+      
+      
+      
+      https://raw.githubusercontent.com/chayonkumer/Songfile/main/Arijit%20Singh_%20Humdard%20(Lyrics)%20_%20Ek%20Villian(MP3_160K).mp3
+      
+      
+      
+      " type="audio/mpeg">
+    আপনার ব্রাউজার অডিও চালাতে পারছে না।
+  </audio>
+
+  <script>
+    const fullText =
+      'হারানো সময়টাকে শুধু Miss করা যায় ✨🖤,\nকিন্তু কখনো ফিরে পাওয়া যায় না 🌸💝';
+    let index = 0;
+    let emojiInterval;
+
+    function goToNextPage() {
+      document.getElementById('page1').classList.add('hidden');
+      const page2 = document.getElementById('page2');
+      page2.classList.remove('hidden');
+
+      // Play background music
+      const music = document.getElementById('bgMusic');
+      music.play().catch(() => {
+        console.log("Autoplay failed.");
+      });
+
+      const textElement = document.getElementById('text');
+      const typing = setInterval(() => {
+        if (index < fullText.length) {
+          textElement.innerHTML += fullText.charAt(index);
+          index++;
+        } else {
+          clearInterval(typing);
+          document.getElementById('typingContainer').style.borderRight = 'none';
+          clearInterval(emojiInterval);
+        }
+      }, 80);
+
+      emojiInterval = setInterval(createLoveEmoji, 500);
+    }
+
+    function createLoveEmoji() {
+      const emoji = document.createElement('div');
+      emoji.textContent = '❤️';
+      emoji.style.position = 'fixed';
+      emoji.style.left = Math.random() * 100 + 'vw';
+      emoji.style.bottom = '-2rem';
+      emoji.style.fontSize = (Math.random() * 20 + 20) + 'px';
+      emoji.style.opacity = 1;
+      emoji.style.pointerEvents = 'none';
+      emoji.style.zIndex = 1000;
+      emoji.style.userSelect = 'none';
+      document.body.appendChild(emoji);
+
+      let bottom = -20;
+      const left = parseFloat(emoji.style.left);
+      const floatUp = () => {
+        bottom += 2 + Math.random() * 2;
+        emoji.style.bottom = bottom + 'px';
+        emoji.style.left = (left + Math.sin(bottom / 30) * 20) + 'px';
+        emoji.style.opacity -= 0.02;
+        if (emoji.style.opacity <= 0) {
+          emoji.remove();
+          clearInterval(interval);
+        }
+      };
+
+      const interval = setInterval(floatUp, 50);
+    }
+  </script>
+</body>
+</html>
